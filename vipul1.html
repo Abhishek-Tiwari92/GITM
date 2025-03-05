@@ -1,0 +1,451 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      background-image: linear-gradient(rgba(4,9,30,0.7),rgba(4,9,30,0.7))
+   ,url(121.jpg); 
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    }
+    
+
+    
+    .chat-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .chat-box {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+    .user-msg, .bot-msg {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+    }
+    .user-msg {
+      background-color: #d1e7dd;
+      text-align: right;
+    }
+    .bot-msg {
+      background-color: #e2e3e5;
+      text-align: left;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .question-btn {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .question-btn:hover {
+      background-color: #0056b3;
+    }
+    .form-section {
+      margin-top: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .form-group button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <h2>College Chatbot</h2>
+    <div class="chat-box" id="chat-box">
+      <!-- Chat messages will appear here -->
+    </div>
+
+    <!-- Initial Buttons -->
+    <div id="initial-buttons">
+      <button class="question-btn" onclick="showCategoryButtons()">Let me know if you need any help</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Predefined responses for categories
+    const categoryResponses = {
+      'About College': ['About Us', 'Foundation', 'Student Strength', 'Address', 'Awards and Achievements'],
+      'Admission Enquiry': ['Fill the enquiry form', 'Fee Structure'],
+      'Contact Details': ['Placement Cell', 'Admission Office'],
+      'Leave a Message': ['Sure, please post your query'],
+      'Show All Programs': ['Computer Science', 'Business Administration', 'Engineering', 'Arts']
+    };
+
+    // Function to start the chatbot with a greeting and categories
+    function initializeChatbot() {
+      let chatBox = document.getElementById('chat-box');
+      
+      // Display greeting message from bot
+      let botMessageDiv = document.createElement('div');
+      botMessageDiv.classList.add('bot-msg');
+      botMessageDiv.textContent = "Good Morning! Let me know if you need any help.";
+      chatBox.appendChild(botMessageDiv);
+      
+      // Show category options to get started
+      setTimeout(() => {
+        showCategoryButtons();
+      }, 1000);  // Delay to make the flow feel more natural
+    }
+
+    // Show the category buttons when the user clicks "Let me know if you need any help"
+    function showCategoryButtons() {
+      let chatBox = document.getElementById('chat-box');
+      let initialButtons = document.getElementById('initial-buttons');
+      
+      // Remove the initial greeting and buttons
+      initialButtons.innerHTML = '';
+      
+      // Add bot message for categories
+      let botMessageDiv = document.createElement('div');
+      botMessageDiv.classList.add('bot-msg');
+      botMessageDiv.textContent = "Please choose from one of the following categories to get started:";
+      chatBox.appendChild(botMessageDiv);
+
+      // Add category buttons
+      for (let category in categoryResponses) {
+        let button = document.createElement('button');
+        button.classList.add('question-btn');
+        button.textContent = category;
+        button.onclick = () => showSubCategoryButtons(category);
+        chatBox.appendChild(button);
+      }
+
+      // Scroll to the bottom of the chat
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Show the subcategory buttons based on the category selected
+    function showSubCategoryButtons(category) {
+      let chatBox = document.getElementById('chat-box');
+
+      // Display selected category
+      let userMessageDiv = document.createElement('div');
+      userMessageDiv.classList.add('user-msg');
+      userMessageDiv.textContent = category;
+      chatBox.appendChild(userMessageDiv);
+
+      // Display corresponding subcategories
+      let botMessageDiv = document.createElement('div');
+      botMessageDiv.classList.add('bot-msg');
+      botMessageDiv.textContent = ` ${category}:`;
+      chatBox.appendChild(botMessageDiv);
+
+      categoryResponses[category].forEach(option => {
+        let button = document.createElement('button');
+        button.classList.add('question-btn');
+        button.textContent = option;
+        button.onclick = () => handleOptionSelection(option, category);
+        chatBox.appendChild(button);
+      });
+
+      // Scroll to the bottom of the chat
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Handle what happens when a user selects an option from a category
+    function handleOptionSelection(option, category) {
+      let chatBox = document.getElementById('chat-box');
+
+      // Display the selected option
+      let userMessageDiv = document.createElement('div');
+      userMessageDiv.classList.add('user-msg');
+      userMessageDiv.textContent = option;
+      chatBox.appendChild(userMessageDiv);
+
+      if (category === 'About College') {
+        handleAboutCollegeOption(option);
+      } else if (category === 'Admission Enquiry' && option === 'Fill the enquiry form') {
+        showAdmissionForm();
+      } else if (category === 'Admission Enquiry' && option === 'Fee Structure') {
+        showFeeStructure();
+      } else if (category === 'Leave a Message' && option === 'Sure, please post your query') {
+        showMessageForm();
+      } else {
+        let botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-msg');
+        botMessageDiv.textContent = ` ${option}. `;
+        chatBox.appendChild(botMessageDiv);
+      }
+
+      // Scroll to the bottom of the chat
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Handle About College options
+    function handleAboutCollegeOption(option) {
+      let chatBox = document.getElementById('chat-box');
+
+      if (option === 'About Us') {
+        let botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-msg');
+        botMessageDiv.textContent = `Goel Institute of Technology & Management believes in imparting quality education to its students. The Institute has its quality procedures such as Learning material development including lab manuals, lecture notes, and exposure of students to the information available on the Internet. GITM under Goel Group of Institutions has been delivering education to all ages of young minds in Engineering & Management fields of education. Our emphasis is that even though students come from different backgrounds but when they go out, they are perfect professionals and worthy citizens of this great country India.`;
+        chatBox.appendChild(botMessageDiv);
+      } else if (option === 'Foundation') {
+        let botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-msg');
+        botMessageDiv.textContent = 'The college was established in 2010.';
+        chatBox.appendChild(botMessageDiv);
+      } else if (option === 'Student Strength') {
+        let botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-msg');
+        botMessageDiv.textContent = 'We have 20,000+ students studying with us.';
+        chatBox.appendChild(botMessageDiv);
+      } else if (option === 'Address') {
+        let botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-msg');
+        botMessageDiv.textContent = 'Address: 106 Faizabad Road, Lucknow, Uttar Pradesh 226010';
+        chatBox.appendChild(botMessageDiv);
+      } else if (option === 'Awards and Achievements') {
+        let botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-msg');
+        botMessageDiv.textContent = 'GITM has been awarded a 3.5-star rating by the Institute Innovation Council, Government of India and an award of Excellence in Education by the Times Group.';
+        chatBox.appendChild(botMessageDiv);
+      }
+
+      // Scroll to the bottom of the chat
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Show the Admission Enquiry form
+    function showAdmissionForm() {
+      let chatBox = document.getElementById('chat-box');
+      
+      let botMessageDiv = document.createElement('div');
+      botMessageDiv.classList.add('bot-msg');
+      botMessageDiv.textContent = "In order to help you, please fill the enquiry form by clicking on the button below.";
+      chatBox.appendChild(botMessageDiv);
+
+      let formSection = document.createElement('div');
+      formSection.classList.add('form-section');
+
+      // Course selection
+      let courseSelectDiv = document.createElement('div');
+      courseSelectDiv.classList.add('form-group');
+      let courseSelect = document.createElement('select');
+      let courses = ['Computer Science', 'Business Administration', 'Engineering', 'Arts'];
+      courses.forEach(course => {
+        let option = document.createElement('option');
+        option.textContent = course;
+        courseSelect.appendChild(option);
+      });
+      courseSelectDiv.appendChild(courseSelect);
+      formSection.appendChild(courseSelectDiv);
+
+      // Name input
+      let nameInputDiv = document.createElement('div');
+      nameInputDiv.classList.add('form-group');
+      let nameInput = document.createElement('input');
+      nameInput.placeholder = 'Name';
+      nameInput.type = 'text';
+      nameInputDiv.appendChild(nameInput);
+      formSection.appendChild(nameInputDiv);
+
+      // Phone input
+      let phoneInputDiv = document.createElement('div');
+      phoneInputDiv.classList.add('form-group');
+      let phoneInput = document.createElement('input');
+      phoneInput.placeholder = 'Phone';
+      phoneInput.type = 'text';
+      phoneInputDiv.appendChild(phoneInput);
+      formSection.appendChild(phoneInputDiv);
+
+      // Email input
+      let emailInputDiv = document.createElement('div');
+      emailInputDiv.classList.add('form-group');
+      let emailInput = document.createElement('input');
+      emailInput.placeholder = 'Email';
+      emailInput.type = 'email';
+      emailInputDiv.appendChild(emailInput);
+      formSection.appendChild(emailInputDiv);
+
+      // Location input
+      let locationInputDiv = document.createElement('div');
+      locationInputDiv.classList.add('form-group');
+      let locationInput = document.createElement('input');
+      locationInput.placeholder = 'Location';
+      locationInput.type = 'text';
+      locationInputDiv.appendChild(locationInput);
+      formSection.appendChild(locationInputDiv);
+
+      // Add reset and submit buttons
+      let buttonsDiv = document.createElement('div');
+      buttonsDiv.classList.add('form-group');
+
+      let resetButton = document.createElement('button');
+      resetButton.textContent = 'Reset';
+      resetButton.onclick = () => resetForm(formSection);
+      buttonsDiv.appendChild(resetButton);
+
+      let submitButton = document.createElement('button');
+      submitButton.textContent = 'Submit';
+      submitButton.onclick = () => submitForm(formSection);
+      buttonsDiv.appendChild(submitButton);
+
+      formSection.appendChild(buttonsDiv);
+      chatBox.appendChild(formSection);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Function to reset the form
+    function resetForm(formSection) {
+      formSection.querySelectorAll('input').forEach(input => input.value = '');
+    }
+
+    // Function to submit the form
+    function submitForm(formSection) {
+      let formValues = [];
+      formSection.querySelectorAll('input').forEach(input => {
+        formValues.push(input.value);
+      });
+      alert('Form submitted with values: ' + formValues.join(', '));
+    }
+
+    // Show Fee Structure
+    function showFeeStructure() {
+      let chatBox = document.getElementById('chat-box');
+
+      let botMessageDiv = document.createElement('div');
+      botMessageDiv.classList.add('bot-msg');
+      botMessageDiv.textContent = `Fee Structure:\n\n
+        HOSTEL FEE:\nThe student has to pay the Hostel fee separately per year, which includes charges for food and lodging (Excluding caution money).\n
+        Fees once deposited will not be refunded except under certain conditions. The hostel fee has to be deposited at the time of admission.\n\n
+        REFUND OF FEE:\nIf the student wishes to leave in mid of the session, the student will be expected to deposit the entire fee for that year before obtaining NOC. The fee and the other charges paid at the time of admission or during the courses are nonrefundable. However, any security deposit and the caution money will be refunded only after the completion of the course.\n\n
+        B.Tech - ₹78,589/- per annum\nM.Tech - ₹78,589/- per annum\nMBA - ₹78,589/- per annum\nDiploma Engineering - ₹30,150/- per annum\n\n
+        Dress Code: Uniform on campus is mandatory.`;
+      chatBox.appendChild(botMessageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Show the Leave a Message form
+    function showMessageForm() {
+      let chatBox = document.getElementById('chat-box');
+
+      let botMessageDiv = document.createElement('div');
+      botMessageDiv.classList.add('bot-msg');
+      botMessageDiv.textContent = "Sure, please post your query by filling in the details below.";
+      chatBox.appendChild(botMessageDiv);
+
+      let formSection = document.createElement('div');
+      formSection.classList.add('form-section');
+
+      // Name input
+      let nameInputDiv = document.createElement('div');
+      nameInputDiv.classList.add('form-group');
+      let nameInput = document.createElement('input');
+      nameInput.placeholder = 'Name';
+      nameInput.type = 'text';
+      nameInputDiv.appendChild(nameInput);
+      formSection.appendChild(nameInputDiv);
+
+      // Phone input
+      let phoneInputDiv = document.createElement('div');
+      phoneInputDiv.classList.add('form-group');
+      let phoneInput = document.createElement('input');
+      phoneInput.placeholder = 'Phone';
+      phoneInput.type = 'text';
+      phoneInputDiv.appendChild(phoneInput);
+      formSection.appendChild(phoneInputDiv);
+
+      // Email input
+      let emailInputDiv = document.createElement('div');
+      emailInputDiv.classList.add('form-group');
+      let emailInput = document.createElement('input');
+      emailInput.placeholder = 'Email';
+      emailInput.type = 'email';
+      emailInputDiv.appendChild(emailInput);
+      formSection.appendChild(emailInputDiv);
+
+      // Query input
+      let queryInputDiv = document.createElement('div');
+      queryInputDiv.classList.add('form-group');
+      let queryInput = document.createElement('textarea');
+      queryInput.placeholder = 'Your query';
+      queryInputDiv.appendChild(queryInput);
+      formSection.appendChild(queryInputDiv);
+
+      // Add reset and submit buttons
+      let buttonsDiv = document.createElement('div');
+      buttonsDiv.classList.add('form-group');
+
+      let resetButton = document.createElement('button');
+      resetButton.textContent = 'Reset';
+      resetButton.onclick = () => resetForm(formSection);
+      buttonsDiv.appendChild(resetButton);
+
+      let submitButton = document.createElement('button');
+      submitButton.textContent = 'Submit';
+      submitButton.onclick = () => submitMessage(formSection);
+      buttonsDiv.appendChild(submitButton);
+
+      formSection.appendChild(buttonsDiv);
+      chatBox.appendChild(formSection);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Function to submit the message
+    function submitMessage(formSection) {
+      let formValues = [];
+      formSection.querySelectorAll('input, textarea').forEach(input => {
+        formValues.push(input.value);
+      });
+      alert('Message submitted: ' + formValues.join(', '));
+    }
+
+    // Initialize the chatbot
+    initializeChatbot();
+  </script>
+
+</body>
+</html>
